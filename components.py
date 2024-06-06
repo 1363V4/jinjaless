@@ -1,4 +1,6 @@
 import htpy as h
+import datetime
+
 
 def head():
     return h.head[
@@ -12,31 +14,33 @@ def head():
     ]
 
 def header():
-    return h.div[
-        h.img(src="/static/img/kicknews_logo.png")
+    return h.header[
+        h.a(href="/")[
+            h.img(src="/static/img/kicknews_logo.png")
+        ]
     ]
 
 def searchbar():
-    return h.form(
-        {
-            'hx-post': "search",
-            'hx-target': "#results_container",
-            'hx-swap': "outerHTML"
-        }
-    )[
-        h.input(
-            type="text",
-            name="searchfield",
-            placeholder="Search Kickstarter projects about...",
-            maxlength="50",
-            min="0",
-        )
+    return h.div("#searchbar")[
+        h.form(
+            {
+                'hx-post': "search",
+                'hx-target': "#results_container",
+                'hx-swap': "outerHTML"
+            }
+        )[
+            h.input(
+                type="text",
+                name="searchbar",
+                placeholder="The latest news about...",
+            )
+        ]
     ]
 
 def result_div(result):
-    return h.div[
+    return h.div(".result_div")[
         h.a(href=result['url'])[
-            h.h3[result['title']]
+            h.h4[result['title']]
         ],
         h.p[
             result['text']
@@ -49,14 +53,13 @@ def result_container(results):
     ]
 
 def main(context):
-    return [
+    return h.main[
         searchbar(),
         h.div("#results_container")
     ]
 
 def footer():
-    import datetime
-    return h.p["Copyright ©" + datetime.datetime.now().strftime("%Y")]
+    return h.footer["Copyright Kicknews ©" + datetime.datetime.now().strftime("%Y")]
 
 def body(context): 
     return h.body[

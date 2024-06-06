@@ -1,20 +1,23 @@
 import os
+from dotenv import load_dotenv
 from exa_py import Exa
 from typing import List, Dict
+
+load_dotenv()
 
 exa = Exa(api_key=os.environ.get('EXA_API_KEY'))
 
 
 def get_results(input_value: str) -> List[Dict]:
     search = exa.search_and_contents(
-        "sandwich maker",
-        type="neural",
+        "The latest news about" + input_value,
+        type="magic",
         use_autoprompt=True,
-        num_results=10,
-        include_domains=["https://www.kickstarter.com/"],
+        num_results=3,
         text={
-            "max_characters": 50
-        }
+            "max_characters": 200
+        },
+        category="news"
     ).results
     results = [
         {

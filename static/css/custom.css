@@ -5,6 +5,21 @@
     flex-wrap: wrap;
 }
 
+footer {
+    margin-top: auto;
+}
+
+#searchbar {
+    padding-top: 2rem;
+}
+
+input {
+    width: 100%;
+}
+
 .result_div {
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem;
 }
