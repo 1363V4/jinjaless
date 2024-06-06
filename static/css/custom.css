@@ -1,0 +1,10 @@
+.flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.result_div {
+    border: 1px solid var(--border);
+}
