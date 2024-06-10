@@ -52,24 +52,29 @@ def result_container(results):
         [result_div(result) for result in results]
     ]
 
-def main(context):
+def main(state):
     return h.main[
         searchbar(),
         h.div("#results_container")
     ]
 
 def footer():
-    return h.footer["Copyright Kicknews ©" + datetime.datetime.now().strftime("%Y")]
+    return h.footer[
+        "Copyright Kicknews ©" + datetime.datetime.now().strftime("%Y"),
+        h.a(href="https://github.com/1363V4/jinjaless")[
+            h.img(src="/static/svg/github-fill.svg")
+        ]
+    ]
 
-def body(context): 
+def body(state): 
     return h.body[
         header(),
-        main(context),
+        main(state),
         footer()
     ]
 
-def home_page(context):
+def home_page(state):
     return h.html[
         head(),
-        body(context),
+        body(state),
     ]
