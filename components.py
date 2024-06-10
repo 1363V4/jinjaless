@@ -60,9 +60,12 @@ def main(state):
 
 def footer():
     return h.footer[
-        "Copyright Kicknews ©" + datetime.datetime.now().strftime("%Y"),
+        "Copyright Kicknews ©" + datetime.datetime.now().strftime("%Y") + " ",
         h.a(href="https://github.com/1363V4/jinjaless")[
-            h.img(src="/static/svg/github-fill.svg")
+            h.img(
+                ".icons",
+                src="/static/svg/github-fill.svg"
+            )
         ]
     ]
 
