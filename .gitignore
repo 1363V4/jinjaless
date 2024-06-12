@@ -9,3 +9,6 @@ pyvenv.cfg
 Include/
 Lib/
 Scripts/
+
+# db
+news.db

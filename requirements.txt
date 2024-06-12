@@ -3,3 +3,4 @@ Gunicorn
 htpy
 exa-py
 python-dotenv
+peewee
