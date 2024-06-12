@@ -10,7 +10,6 @@ load_dotenv()
 
 exa = Exa(api_key=os.environ.get('EXA_API_KEY'))
 
-
 def get_topics() -> Dict[str, Any]:
     return {
         'topics': [
@@ -19,7 +18,8 @@ def get_topics() -> Dict[str, Any]:
             "israel",
             "french elections",
             "dofus",
-            "age of empires"
+            "age of empires",
+            "secret story"
         ]
     }
 
@@ -79,6 +79,9 @@ def get_results(input_value: str) -> List[Dict]:
     save_results(input_value, results)
     return results
 
-def clean_db():
+def get_searches() -> List[str]:
+    return [search.search for search in Search.select()]
+
+def clean_db() -> None:
     cutoff_time = datetime.now() - timedelta(hours=24)
     News.delete().where(News.saved_date < cutoff_time).execute()

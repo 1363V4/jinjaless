@@ -1,5 +1,6 @@
 from peewee import *
 
+
 db = SqliteDatabase('news.db')
 
 class BaseModel(Model):

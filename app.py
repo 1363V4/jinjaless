@@ -1,10 +1,9 @@
 from flask import Flask, redirect, request, Response, session, url_for
-from components import home_page, result_container, max_requests
+from components import home_page, result_container, max_requests, snitch_page
 from markupsafe import Markup
 from dotenv import load_dotenv
 import os
 import utils
-import uuid
 
 
 load_dotenv()
@@ -42,6 +41,11 @@ def topic():
 def reset():
     utils.clean_db()
     return redirect(url_for('index'))
+
+@app.route('/snitch', methods=['GET'])
+def snitch():
+    data = utils.get_searches()
+    return Response(snitch_page(data))
 
 if __name__ == '__main__':
     app.run(debug=True)

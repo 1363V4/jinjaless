@@ -2,6 +2,7 @@ import htpy as h
 import datetime
 from typing import List, Dict, Any
 
+
 def head() -> h.Element:
     return h.head[
         h.title["kicknews"],
@@ -122,5 +123,13 @@ def max_requests():
             "Please upgrade to a ",
             h.a(href="https://www.youtube.com/watch?v=dQw4w9WgXcQ")["paid plan"],
             " to continue."
+        ]
+    ]
+
+def snitch_page(data):
+    return h.html[
+        head(),
+        [
+            h.p[datum] for datum in data
         ]
     ]
