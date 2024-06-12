@@ -57,7 +57,7 @@ def get_results(input_value: str) -> List[Dict]:
 
     search = exa.search_and_contents(
         "The latest news about" + input_value,
-        type="magic",
+        type="neural",
         use_autoprompt=True,
         num_results=3,
         text={
@@ -78,3 +78,7 @@ def get_results(input_value: str) -> List[Dict]:
     ]
     save_results(input_value, results)
     return results
+
+def clean_db():
+    cutoff_time = datetime.now() - timedelta(hours=24)
+    News.delete().where(News.saved_date < cutoff_time).execute()

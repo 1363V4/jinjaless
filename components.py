@@ -114,3 +114,13 @@ def home_page(state: Dict[str, Any]) -> h.Element:
         head(),
         body(state),
     ]
+
+def max_requests():
+    return h.p[
+        "You used all your requests.", 
+        h.p[
+            "Please upgrade to a ",
+            h.a(href="https://www.youtube.com/watch?v=dQw4w9WgXcQ")["paid plan"],
+            " to continue."
+        ]
+    ]
