@@ -19,7 +19,6 @@ def get_topics() -> Dict[str, Any]:
             "french elections",
             "dofus",
             "age of empires",
-            "secret story"
         ]
     }
 
