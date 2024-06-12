@@ -3,3 +3,9 @@ __pycache__/
 
 # Environments
 .env
+
+# venv stuff
+pyvenv.cfg
+Include/
+Lib/
+Scripts/
