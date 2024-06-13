@@ -1,5 +1,5 @@
 from flask import Flask, redirect, request, Response, session, url_for
-from components import home_page, result_container, max_requests, snitch_page
+from components import home_page, input_swap, result_container, max_requests, snitch_page
 from markupsafe import Markup
 from dotenv import load_dotenv
 import os
@@ -32,9 +32,7 @@ def search():
 def topic():
     topic = request.form.get('topic')
     results = utils.get_results(topic)
-    swap = f'''
-        <input id="input" hx-swap-oob="true" type="text" name="searchbar" value="{topic}">
-    '''
+    swap = input_swap(topic)
     return Response(Markup(swap) + str(result_container(results)))
 
 @app.route('/reset', methods=['GET'])

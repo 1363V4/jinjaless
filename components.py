@@ -116,6 +116,15 @@ def home_page(state: Dict[str, Any]) -> h.Element:
         body(state),
     ]
 
+def input_swap(topic) -> h.Element:
+    return h.input(
+        "#input",
+        hx_swap_oob="true",
+        type="text",
+        name="searchbar",
+        value=topic
+    )
+
 def max_requests():
     return h.p[
         "You used all your requests.", 
