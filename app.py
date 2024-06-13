@@ -23,7 +23,7 @@ def search():
     if session['access_count'] > 5:
         return Response(max_requests())
 
-    input_value = request.form.get('searchbar')
+    input_value = request.form.get('searchbar').lower()
     results = utils.get_results(input_value)
     
     return Response(result_container(results))
