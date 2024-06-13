@@ -1,7 +1,15 @@
+import os
 from peewee import *
 
-
-db = SqliteDatabase('news.db')
+if os.environ.get('ENV') == 'production':
+    db = PostgresqlDatabase(
+        'kicknews_db', 
+        user='kicknews', 
+        password=os.environ.get('DB_PWD'), 
+        host=os.environ.get('DB_URL')
+    )
+else:
+    db = SqliteDatabase('news.db')
 
 class BaseModel(Model):
     class Meta:
