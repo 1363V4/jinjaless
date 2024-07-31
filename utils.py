@@ -1,16 +1,16 @@
 import os
 from dotenv import load_dotenv
 from exa_py import Exa
-from typing import List, Dict, Any
 from datetime import datetime, timedelta
-from models import db, Search, News
-
+import redis
+import json
 
 load_dotenv()
 
 exa = Exa(api_key=os.environ.get('EXA_API_KEY'))
+redis_client = redis.from_url("redis://red-cqku2c3qf0us73bprfa0:6379")
 
-def get_topics() -> Dict[str, Any]:
+def get_topics():
     return {
         'topics': [
             "biden",
@@ -23,39 +23,30 @@ def get_topics() -> Dict[str, Any]:
     }
 
 def save_results(input_value, results):
-    search_entry = Search.create(search=input_value)
     for result in results:
-        News.create(
-            search=search_entry,
-            title=result['title'],
-            url=result['url'],
-            text=result['text'],
-            date=result['date'],
-            saved_date=datetime.now(),
-        )
+        redis_client.hset(input_value, result['url'], json.dumps({
+            'title': result['title'],
+            'text': result['text'],
+            'date': result['date'],
+            'saved_date': datetime.now().isoformat(),
+        }))
 
-def get_saved_results(input_value: str):
-    search_entry = Search.get_or_none(Search.search == input_value)
-    if search_entry:
+def get_saved_results(input_value):
+    saved_results = redis_client.hgetall(input_value)
+    if saved_results:
         return [
-            {
-                'title': news.title,
-                'url': news.url,
-                'text': news.text,
-                'date': news.date,
-                'saved_date': news.saved_date,
-            }
-            for news in search_entry.news
+            json.loads(result)
+            for result in saved_results.values()
         ]
     return None
 
-def get_results(input_value: str) -> List[Dict]:
+def get_results(input_value):
     saved_results = get_saved_results(input_value)
     if saved_results:
         return saved_results
 
     search = exa.search_and_contents(
-        "The latest news about" + input_value,
+        f"Give me the latest news about {input_value}. Only consider news sites and blog posts.",
         type="neural",
         use_autoprompt=True,
         num_results=3,
@@ -78,10 +69,8 @@ def get_results(input_value: str) -> List[Dict]:
     save_results(input_value, results)
     return results
 
-def get_searches() -> List[str]:
-    return [search.search for search in Search.select()]
+def get_searches():
+    return [key.decode('utf-8') for key in redis_client.keys()]
 
-def clean_db(redis_client) -> None:
+def clean_db() -> None:
     redis_client.flushdb()
-    cutoff_time = datetime.now() - timedelta(hours=24)
-    News.delete().where(News.saved_date < cutoff_time).execute()
