@@ -64,6 +64,7 @@ def get_results(input_value):
     '''
     saved_results = get_saved_results(input_value)
     if saved_results:
+        print(saved_results)
         return saved_results
 
     search = exa.search_and_contents(
@@ -97,7 +98,7 @@ def get_searches():
     Returns:
         list: A list of search keys and their values as strings.
     '''
-    return [f"{key}: {redis_client.get(key).decode('utf-8')}" for key in redis_client.keys()]
+    return [key for key in redis_client.keys()]
 
 def clean_db():
     '''
