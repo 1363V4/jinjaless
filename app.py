@@ -23,7 +23,7 @@ def search():
         session['access_count'] = 1
     else:
         session['access_count'] += 1
-        if session['access_count'] >= 5:
+        if session['access_count'] >= 10:
             return Response(max_requests())
 
     input_value = request.form.get('searchbar').lower()

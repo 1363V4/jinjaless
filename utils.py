@@ -28,9 +28,7 @@ def save_results(input_value, results):
 
 def get_saved_results(input_value):
     saved_results = redis_client.lrange(input_value, 0, -1)
-    if saved_results:
-        return json.loads(saved_results)
-    return None
+    return [json.loads(result) for result in saved_results]
 
 def get_results(input_value):
     saved_results = get_saved_results(input_value)
@@ -62,7 +60,7 @@ def get_results(input_value):
     return results
 
 def get_searches():
-    return [key.decode('utf-8') + "___" + redis_client.hget(key, "saved_date").decode('utf-8') for key in redis_client.keys()]
+    return [key for key in redis_client.keys()]
 
 def clean_db() -> None:
     redis_client.flushdb()
