@@ -8,7 +8,8 @@ import json
 load_dotenv()
 
 exa = Exa(api_key=os.environ.get('EXA_API_KEY'))
-redis_client = redis.from_url("redis://red-cqku2c3qf0us73bprfa0:6379")
+redis_url = os.environ.get('REDIS_URL')
+redis_client = redis.from_url(redis_url)
 
 def get_topics():
     return {
@@ -23,13 +24,12 @@ def get_topics():
     }
 
 def save_results(input_value, results):
-    redis_client.hset(input_value, "results", results)
-    redis_client.hset(input_value, "saved_date", datetime.now().isoformat())
+    redis_client.lpush(input_value, json.dumps(results))
 
 def get_saved_results(input_value):
-    saved_results = redis_client.hget(input_value, "results")
+    saved_results = redis_client.lrange(input_value, 0, -1)
     if saved_results:
-        return [result for result in saved_results]
+        return json.loads(saved_results)
     return None
 
 def get_results(input_value):
