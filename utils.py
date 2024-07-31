@@ -81,6 +81,7 @@ def get_results(input_value: str) -> List[Dict]:
 def get_searches() -> List[str]:
     return [search.search for search in Search.select()]
 
-def clean_db() -> None:
+def clean_db(redis_client) -> None:
+    redis_client.flushdb()
     cutoff_time = datetime.now() - timedelta(hours=24)
     News.delete().where(News.saved_date < cutoff_time).execute()

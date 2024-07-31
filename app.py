@@ -43,7 +43,7 @@ def topic():
 
 @app.route('/reset', methods=['GET'])
 def reset():
-    utils.clean_db()
+    utils.clean_db(redis_client)
     return redirect(url_for('index'))
 
 @app.route('/snitch', methods=['GET'])
