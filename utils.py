@@ -12,6 +12,9 @@ redis_url = os.environ.get('REDIS_URL')
 redis_client = redis.from_url(redis_url)
 
 def get_topics():
+    '''
+    Returns a dictionary of predefined topics.
+    '''
     return {
         'topics': [
             "biden",
@@ -24,13 +27,41 @@ def get_topics():
     }
 
 def save_results(input_value, results):
+    '''
+    Saves the search results to Redis.
+
+    Args:
+        input_value (str): The key under which results are saved in a list.
+        results (list): The search results to save, as a JSON string.
+    '''
     redis_client.lpush(input_value, json.dumps(results))
 
 def get_saved_results(input_value):
-    saved_results = redis_client.lrange(input_value, 0, -1)
+    '''
+    Retrieves saved search results from Redis.
+
+    Args:
+        input_value (str): The key under which results are saved.
+
+    Returns:
+        list: A list of saved search results as dicts.
+    '''
+    if input_value in redis_client.keys():
+        saved_results = redis_client.lrange(input_value, 0, -1)
+    else:
+        saved_results = []
     return [json.loads(result) for result in saved_results]
 
 def get_results(input_value):
+    '''
+    Retrieves search results, either from Redis or by performing a new search.
+
+    Args:
+        input_value (str): The search query.
+
+    Returns:
+        list: A list of search results as dicts.
+    '''
     saved_results = get_saved_results(input_value)
     if saved_results:
         return saved_results
@@ -60,7 +91,16 @@ def get_results(input_value):
     return results
 
 def get_searches():
-    return [key for key in redis_client.keys()]
+    '''
+    Retrieves all search keys and their values from Redis.
 
-def clean_db() -> None:
+    Returns:
+        list: A list of search keys and their values as strings.
+    '''
+    return [f"{key}: {redis_client.get(key).decode('utf-8')}" for key in redis_client.keys()]
+
+def clean_db():
+    '''
+    Flushes the Redis database.
+    '''
     redis_client.flushdb()
