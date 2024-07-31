@@ -87,7 +87,7 @@ def main(state: Dict[str, Any]) -> h.Element:
     return h.main[
         searchbar(),
         topics(state),
-        result_container(results=[{}])
+        result_container(results=None),
     ]
 
 def footer() -> h.Element:
