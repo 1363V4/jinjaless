@@ -9,7 +9,7 @@ load_dotenv()
 
 exa = Exa(api_key=os.environ.get('EXA_API_KEY'))
 redis_url = os.environ.get('REDIS_URL')
-redis_client = redis.from_url(redis_url)
+redis_client = redis.from_url(redis_url, decode_responses=True)
 
 def get_topics():
     '''
@@ -47,10 +47,7 @@ def get_saved_results(input_value):
     Returns:
         list: A list of saved search results as dicts.
     '''
-    if input_value in redis_client.keys():
-        saved_results = redis_client.lrange(input_value, 0, -1)
-    else:
-        saved_results = []
+    saved_results = redis_client.lrange(input_value, 0, -1)
     return [json.loads(result) for result in saved_results]
 
 def get_results(input_value):
@@ -65,7 +62,6 @@ def get_results(input_value):
     '''
     saved_results = get_saved_results(input_value)
     if saved_results:
-        print(saved_results)
         return saved_results
 
     search = exa.search_and_contents(
