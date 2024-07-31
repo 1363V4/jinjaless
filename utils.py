@@ -29,13 +29,14 @@ def get_topics():
 def save_results(input_value, results):
     '''
     Saves the search results to Redis.
+    RPUSH returns an empty list if input_value is not in database.
 
     Args:
         input_value (str): The key under which results are saved in a list.
         results (list): The search results to save, as a JSON string.
     '''
     for result in results:
-        redis_client.lpush(input_value, json.dumps(result))
+        redis_client.rpush(input_value, json.dumps(result))
 
 def get_saved_results(input_value):
     '''
@@ -90,10 +91,7 @@ def get_results(input_value):
 
 def get_searches():
     '''
-    Retrieves all search keys and their values from Redis.
-
-    Returns:
-        list: A list of search keys and their values as strings.
+    Retrieves all search keys from Redis.
     '''
     return [key for key in redis_client.keys()]
 
