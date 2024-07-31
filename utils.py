@@ -34,7 +34,8 @@ def save_results(input_value, results):
         input_value (str): The key under which results are saved in a list.
         results (list): The search results to save, as a JSON string.
     '''
-    redis_client.lpush(input_value, json.dumps(results))
+    for result in results:
+        redis_client.lpush(input_value, json.dumps(result))
 
 def get_saved_results(input_value):
     '''
