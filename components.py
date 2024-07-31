@@ -99,7 +99,8 @@ def footer() -> h.Element:
                     ".icons",
                     src="/static/svg/github-fill.svg"
                 )
-            ]
+            ],
+            h.p["Build v2.1"]
         ]
     ]
 

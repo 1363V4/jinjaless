@@ -23,21 +23,13 @@ def get_topics():
     }
 
 def save_results(input_value, results):
-    for result in results:
-        redis_client.hset(input_value, result['url'], json.dumps({
-            'title': result['title'],
-            'text': result['text'],
-            'date': result['date'],
-            'saved_date': datetime.now().isoformat(),
-        }))
+    redis_client.hset(input_value, "results", results)
+    redis_client.hset(input_value, "saved_date", datetime.now().isoformat())
 
 def get_saved_results(input_value):
-    saved_results = redis_client.hgetall(input_value)
+    saved_results = redis_client.hget(input_value, "results")
     if saved_results:
-        return [
-            json.loads(result)
-            for result in saved_results.values()
-        ]
+        return [result for result in saved_results]
     return None
 
 def get_results(input_value):
@@ -70,7 +62,7 @@ def get_results(input_value):
     return results
 
 def get_searches():
-    return [key.decode('utf-8') for key in redis_client.keys()]
+    return [key.decode('utf-8') + "___" + redis_client.hget(key, "saved_date").decode('utf-8') for key in redis_client.keys()]
 
 def clean_db() -> None:
     redis_client.flushdb()
