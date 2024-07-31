@@ -99,7 +99,7 @@ def get_searches():
     Returns:
         list: A list of search keys and their values as strings.
     '''
-    return [key for key in redis_client.keys()]
+    return [str(key) for key in redis_client.keys()]
 
 def clean_db():
     '''
