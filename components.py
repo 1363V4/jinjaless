@@ -100,7 +100,7 @@ def footer() -> h.Element:
                     src="/static/svg/github-fill.svg"
                 )
             ],
-            h.p["Build v2.2"]
+            h.p["Build v3.0"]
         ]
     ]
 

@@ -42,13 +42,6 @@ def get_saved_results(input_value):
     '''
     Retrieves saved search results from Redis.
 
-<<<<<<< HEAD
-def unfuck_date(utc_date):
-    dt = datetime.fromisoformat(utc_date)
-    return dt.strftime("%d/%m/%Y")
-
-def get_results(input_value: str) -> List[Dict]:
-=======
     Args:
         input_value (str): The key under which results are saved.
 
@@ -57,6 +50,10 @@ def get_results(input_value: str) -> List[Dict]:
     '''
     saved_results = redis_client.lrange(input_value, 0, -1)
     return [json.loads(result) for result in saved_results]
+
+def unfuck_date(utc_date):
+    dt = datetime.fromisoformat(utc_date)
+    return dt.strftime("%d/%m/%Y")
 
 def get_results(input_value):
     '''
@@ -68,7 +65,6 @@ def get_results(input_value):
     Returns:
         list: A list of search results as dicts.
     '''
->>>>>>> 3bf14b4ce0c0cb8b3fca72ab6720fd1126df7a46
     saved_results = get_saved_results(input_value)
     if saved_results:
         return saved_results
