@@ -1,16 +1,20 @@
 import os
 from dotenv import load_dotenv
 from exa_py import Exa
-from typing import List, Dict, Any
 from datetime import datetime, timedelta
-from models import db, Search, News
-
+import redis
+import json
 
 load_dotenv()
 
 exa = Exa(api_key=os.environ.get('EXA_API_KEY'))
+redis_url = os.environ.get('REDIS_URL')
+redis_client = redis.from_url(redis_url, decode_responses=True)
 
-def get_topics() -> Dict[str, Any]:
+def get_topics():
+    '''
+    Returns a dictionary of predefined topics.
+    '''
     return {
         'topics': [
             "biden",
@@ -23,43 +27,54 @@ def get_topics() -> Dict[str, Any]:
     }
 
 def save_results(input_value, results):
-    search_entry = Search.create(search=input_value)
+    '''
+    Saves the search results to Redis.
+    RPUSH returns an empty list if input_value is not in database.
+
+    Args:
+        input_value (str): The key under which results are saved in a list.
+        results (list): The search results to save, as a JSON string.
+    '''
     for result in results:
-        News.create(
-            search=search_entry,
-            title=result['title'],
-            url=result['url'],
-            text=result['text'],
-            date=result['date'],
-            saved_date=datetime.now(),
-        )
+        redis_client.rpush(input_value, json.dumps(result))
 
-def get_saved_results(input_value: str):
-    search_entry = Search.get_or_none(Search.search == input_value)
-    if search_entry:
-        return [
-            {
-                'title': news.title,
-                'url': news.url,
-                'text': news.text,
-                'date': news.date,
-                'saved_date': news.saved_date,
-            }
-            for news in search_entry.news
-        ]
-    return None
+def get_saved_results(input_value):
+    '''
+    Retrieves saved search results from Redis.
 
+<<<<<<< HEAD
 def unfuck_date(utc_date):
     dt = datetime.fromisoformat(utc_date)
     return dt.strftime("%d/%m/%Y")
 
 def get_results(input_value: str) -> List[Dict]:
+=======
+    Args:
+        input_value (str): The key under which results are saved.
+
+    Returns:
+        list: A list of saved search results as dicts.
+    '''
+    saved_results = redis_client.lrange(input_value, 0, -1)
+    return [json.loads(result) for result in saved_results]
+
+def get_results(input_value):
+    '''
+    Retrieves search results, either from Redis or by performing a new search.
+
+    Args:
+        input_value (str): The search query.
+
+    Returns:
+        list: A list of search results as dicts.
+    '''
+>>>>>>> 3bf14b4ce0c0cb8b3fca72ab6720fd1126df7a46
     saved_results = get_saved_results(input_value)
     if saved_results:
         return saved_results
 
     search = exa.search_and_contents(
-        "The latest news about" + input_value,
+        f"Give me the latest news about {input_value}. Only consider news sites and blog posts.",
         type="neural",
         use_autoprompt=True,
         num_results=3,
@@ -84,9 +99,14 @@ def get_results(input_value: str) -> List[Dict]:
     save_results(input_value, results)
     return results
 
-def get_searches() -> List[str]:
-    return [search.search for search in Search.select()]
+def get_searches():
+    '''
+    Retrieves all search keys from Redis.
+    '''
+    return [key for key in redis_client.keys()]
 
-def clean_db() -> None:
-    cutoff_time = datetime.now() - timedelta(hours=24)
-    News.delete().where(News.saved_date < cutoff_time).execute()
+def clean_db():
+    '''
+    Flushes the Redis database.
+    '''
+    redis_client.flushdb()

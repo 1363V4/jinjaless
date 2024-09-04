@@ -11,17 +11,20 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
 
+
 @app.route('/')
 def index():
     state = utils.get_topics()
     return Response(home_page(state))
 
 @app.route('/search', methods=['POST'])
-def search():    
-    session['access_count'] = session.get('access_count', 0)
-    session['access_count'] += 1
-    if session['access_count'] > 5:
-        return Response(max_requests())
+def search():
+    if 'access_count' not in session:
+        session['access_count'] = 1
+    else:
+        session['access_count'] += 1
+        if session['access_count'] >= 10:
+            return Response(max_requests())
 
     input_value = request.form.get('searchbar').lower()
     results = utils.get_results(input_value)

@@ -1,3 +1,5 @@
+# unused because render kills db after 30 days, switching to redis
+
 import os
 from peewee import *
 

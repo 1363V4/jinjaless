@@ -87,7 +87,7 @@ def main(state: Dict[str, Any]) -> h.Element:
     return h.main[
         searchbar(),
         topics(state),
-        result_container(results={})
+        result_container(results=[]),
     ]
 
 def footer() -> h.Element:
@@ -99,7 +99,8 @@ def footer() -> h.Element:
                     ".icons",
                     src="/static/svg/github-fill.svg"
                 )
-            ]
+            ],
+            h.p["Build v2.2"]
         ]
     ]
 
