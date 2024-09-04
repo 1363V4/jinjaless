@@ -49,6 +49,10 @@ def get_saved_results(input_value: str):
         ]
     return None
 
+def unfuck_date(utc_date):
+    dt = datetime.fromisoformat(utc_date)
+    return dt.strftime("%d/%m/%Y")
+
 def get_results(input_value: str) -> List[Dict]:
     saved_results = get_saved_results(input_value)
     if saved_results:
@@ -71,7 +75,9 @@ def get_results(input_value: str) -> List[Dict]:
             'title': search_result.title,
             'url': search_result.url,
             'text': search_result.text,
-            'date': search_result.published_date if search_result.published_date else "fresh",
+            'date': unfuck_date(search_result.published_date) 
+            if search_result.published_date 
+            else "fresh",
         }
         for search_result in search
     ]
